@@ -1,20 +1,21 @@
 import pandas as pd
 import numpy as np
 
+# STOCKS = ["aapl", "amd", "amzn", "googl", "meta", "msft", "nflx", "nvda", "qcom", "tsla"]
 STOCKS = ["aapl", "amd", "amzn", "googl", "meta", "msft", "nflx", "nvda", "qcom", "tsla"]
-DIR = "/Users/rithikpothuganti/cs467/csci467-project/data"
+DIR = "./data"
 
 def assign_label(row):
     if row['target_return'] <= -0.1:
         # strong sell
         return 0
-    elif -0.1 < row['target_return'] <= -0.05:
+    elif row['target_return'] <= 0:
         # underweight
         return 1
-    elif -0.05 < row['target_return'] <= 0.05:
+    elif row['target_return'] <= 0.1:
         # neutral
         return 2
-    elif 0.05 < row['target_return'] <= 0.1:
+    elif row['target_return'] <= 0.2:
         # overweight
         return 3
     else:
@@ -28,6 +29,8 @@ def get_stock_df(file_path):
     df['Close/Last'] = df['Close/Last'].apply(lambda x: float(str(x)[1:]))
 
     # Calculate returns over various time windows
+    df['r_15d'] = df['Close/Last'].pct_change(10)
+    df['r_30d'] = df['Close/Last'].pct_change(20)
     df['r_90d'] = df['Close/Last'].pct_change(62)
     df['r_180d'] = df['Close/Last'].pct_change(125)
     df['r_1y'] = df['Close/Last'].pct_change(250)
@@ -43,17 +46,24 @@ def get_stock_df(file_path):
 
 
     # Select the relevant columns for the training examples
-    features = ['r_90d', 'r_180d', 'r_1y', 'r_2y', 'r_5y', 'r_10y']
+    features = ['r_15d', 'r_30d', 'r_90d', 'r_180d', 'r_1y', 'r_2y', 'r_5y', 'r_10y']
     label = ['target_return', 'label', 'rating', 'Date', 'Close/Last']
     df_ml = df.loc[255:, features + label].dropna(subset=['target_return'])
+    df_ml['Date'] = pd.to_datetime(df_ml['Date'])
+
     return df_ml
 
 def get_all_stocks_df():
     dfs = []
     for stock in STOCKS:
         df_temp = get_stock_df(f"{DIR}/{stock}.csv")
+        df_temp['stock'] = stock
         dfs.append(df_temp)
-    return pd.concat(dfs, axis=0, ignore_index=True)
+    
+    final_df = pd.concat(dfs, axis=0, ignore_index=True)
+    final_df.sort_values(by='Date', inplace=True, ascending=True, kind='mergesort')
+    # final_df = final_df[final_df['Date'] <= pd.to_datetime('2019-01-01')]
+    return final_df
 
 def featurize(x, d=1):
     if d == 1:
