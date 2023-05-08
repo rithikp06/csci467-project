@@ -9,13 +9,13 @@ def assign_label(row):
     if row['target_return'] <= -0.1:
         # strong sell
         return 0
-    elif -0.1 < row['target_return'] <= 0:
+    elif row['target_return'] <= 0:
         # underweight
         return 1
-    elif -0.05 < row['target_return'] <= 0.1:
+    elif row['target_return'] <= 0.1:
         # neutral
         return 2
-    elif 0.05 < row['target_return'] <= 0.2:
+    elif row['target_return'] <= 0.2:
         # overweight
         return 3
     else:
