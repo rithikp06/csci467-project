@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
 
-STOCKS = ["aapl", "amd", "amzn", "googl", "meta", "msft", "nflx", "nvda", "qcom", "tsla"]
-# STOCKS = ["aapl", "amd", "amzn", "googl", "ibm", "meta", "msft", "nflx", "nvda", "qcom", "t", "tsla", "uis", "lumn"]
+# STOCKS = ["aapl", "amd", "amzn", "googl", "meta", "msft", "nflx", "nvda", "qcom", "tsla"]
+STOCKS = ["aapl", "amd", "amzn", "googl", "ibm", "meta", "msft", "nflx", "nvda", "qcom", "t", "tsla", "uis", "lumn"]
 DIR = "/Users/rithikpothuganti/cs467Project/csci467-project/data"
 
 def assign_label(row):
